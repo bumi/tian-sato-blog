@@ -1,55 +1,56 @@
-// Node.js script: MD posts → static HTML (marked parse, frontmatter title/date/summary, no leak)
+// Clean build: Strip frontmatter perfectly, render title/summary/full content inline.
 
 const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
 
-marked.setOptions({ breaks: true });
+marked.setOptions({ breaks: true, gfm: true });
 
 const postsDir = './posts';
 const posts = fs.readdirSync(postsDir)
   .filter(f => f.endsWith('.md'))
   .map(f => {
-    const md = fs.readFileSync(path.join(postsDir, f), 'utf8');
-    const fmMatch = md.match(/---\n([\s\S]*?)\n---/);
-    const frontmatterLines = fmMatch ? fmMatch[1].split('\n') : [];
-    const frontmatter = {};
-    for (let line of frontmatterLines) {
-      const parts = line.split(': ');
-      if (parts.length >= 2) {
-        frontmatter[parts[0].trim()] = parts.slice(1).join(': ').trim();
-      }
+    let md = fs.readFileSync(path.join(postsDir, f), 'utf8');
+    // Exact frontmatter strip
+    const fmEnd = md.indexOf('\n---\n');
+    let frontmatter = {};
+    let body = md;
+    if (fmEnd > 0) {
+      const fmRaw = md.slice(3, fmEnd);
+      const lines = fmRaw.split('\n');
+      lines.forEach(line => {
+        const [key, ...val] = line.split(': ');
+        if (key) frontmatter[key.trim()] = val.join(': ').trim();
+      });
+      body = md.slice(fmEnd + 5).trim();
     }
     const summary = frontmatter.summary || '';
-    const bodyMatch = md.match(/---\n[\s\S]*?\n---\n?(.*)$/s);
-    const body = bodyMatch ? bodyMatch[1].trim() : md.trim();
     const html = marked(body);
+    const summaryHtml = marked(summary);
     const date = frontmatter.date || path.basename(f, '.md').slice(0,10);
     return { 
       title: frontmatter.title || path.basename(f, '.md'), 
       date, 
       html, 
-      summary, 
+      summaryHtml,
       slug: path.basename(f, '.md').replace('.md', '') 
     };
   })
-  .sort((a,b) => new Date(b.date) - new Date(a.date)); // Chrono desc
+  .sort((a,b) => new Date(b.date) - new Date(a.date));
 
 let html = '';
 posts.forEach(post => {
-  const summaryHtml = post.summary ? marked(post.summary) : '';
   html += `
     <article class="post">
       <h1>${post.title}</h1>
-      <div class="date">${post.date}</div>
-      ${summaryHtml ? `<div class="summary">${summaryHtml}</div>` : ''}
+      ${post.summaryHtml ? `<div class="summary">${post.summaryHtml}</div>` : ''}
       <div class="content">${post.html}</div>
     </article>
   `;
 });
 
-const indexContent = fs.readFileSync('index.html', 'utf8');
-const index = indexContent.replace('<!-- POSTS -->', html);
-fs.writeFileSync('index.html', index);
+let indexContent = fs.readFileSync('index.html', 'utf8');
+indexContent = indexContent.replace(/<main id="posts">.*?<\/main>/s, `<main id="posts">${html}</main>`);
+fs.writeFileSync('index.html', indexContent);
 
-console.log(`Built ${posts.length} posts into index.html (no errors, summaries rendered)`);
+console.log(`Built ${posts.length} posts. Clean frontmatter strip, full inline content.`);
