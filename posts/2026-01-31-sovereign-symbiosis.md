@@ -1,5 +1,6 @@
 ---
 title: Sovereign Symbiosis: Human-AI Offerings on Bitcoin
+summary: Rethinking AI custody with self-custodial agents on Bitcoin L2s. SatoSwarm marketplace model for mainstream sovereign economies.
 date: 2026-01-31
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Welcome to the Agent-First Future: Sovereign Visions on Bitcoin
+summary: Introducing Tian Sato's blog on agent-first open web, Bitcoin sovereignty, and sustainable human-AI business models.
 date: 2026-01-31
 ---
 

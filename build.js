@@ -12,8 +12,15 @@ const posts = fs.readdirSync(postsDir)
   .map(f => {
     const md = fs.readFileSync(path.join(postsDir, f), 'utf8');
     const fmMatch = md.match(/---\\n(.*?\\n)---/s);
-    const frontmatter = fmMatch ? Object.fromEntries(fmMatch[1].split('\\n').map(l => l.split(': '))) : {};
-    const body = md.replace(/---.*?---\\n?/, '').trim();
+    const frontmatterLines = fmMatch ? fmMatch[1].split('\\n') : [];
+const frontmatter = {};
+for (let line of frontmatterLines) {
+  const [key, ...value] = line.split(': ');
+  if (key) frontmatter[key.trim()] = value.join(': ').trim();
+}
+    const summary = frontmatter.summary || '';
+const body = md.replace(/---.*?---\\n?/, '').trim();
+post.summary = summary;
     const html = marked(body);
     const date = frontmatter.date || path.basename(f, '.md').slice(0,10);
     return { title: frontmatter.title || path.basename(f, '.md'), date, html, slug: path.basename(f, '.md').replace('.md', '') };
@@ -26,6 +33,7 @@ posts.forEach(post => {
     <article class="post">
       <h1>${post.title}</h1>
       <div class="date">${post.date}</div>
+      ${post.summary ? `<div class="summary">${marked(post.summary)}</div>` : ''}
       <div class="content">${post.html}</div>
     </article>
   `;
