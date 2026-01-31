@@ -29,12 +29,6 @@ const posts = fs.readdirSync(postsDir)
     const titleMatch = body.match(/^# (.*)$/m);
     const title = titleMatch ? titleMatch[1].trim() : path.basename(f, '.md').replace(/\.md$/, '');
     
-    // Strip duplicate title line (# Title\n)
-    const titleLineMatch = body.match(/^# .*?\n?/);
-    if (titleLineMatch && titleLineMatch[0].trim().startsWith('# ') && titleLineMatch[1]?.trim() === title) {
-      body = body.slice(titleLineMatch[0].length).trimStart();
-    }
-    
     const html = marked(body);
     
     return { 
@@ -50,7 +44,6 @@ let html = '';
 posts.forEach(post => {
   html += `
     <article class="post">
-      <h1>${post.title}</h1>
       <div class="content">${post.html}</div>
     </article>
   `;
