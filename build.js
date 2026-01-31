@@ -1,4 +1,4 @@
-// Node.js script: MD posts → static HTML (marked for parse, frontmatter: title/date/summary)
+// Node.js script: MD posts → static HTML (marked parse, frontmatter title/date/summary)
 
 const fs = require('fs');
 const path = require('path');
@@ -11,15 +11,15 @@ const posts = fs.readdirSync(postsDir)
   .filter(f => f.endsWith('.md'))
   .map(f => {
     const md = fs.readFileSync(path.join(postsDir, f), 'utf8');
-    const fmMatch = md.match(/---\\n(.*?\\n)?---/s);
-    const frontmatterLines = fmMatch ? fmMatch[1].split('\\n') : [];
+    const fmMatch = md.match(/---\n(.*?)\n---/s);
+    const frontmatterLines = fmMatch ? fmMatch[1].split('\n') : [];
     const frontmatter = {};
     for (let line of frontmatterLines) {
-      const [key, ...value] = line.split(': ');
-      if (key) frontmatter[key.trim()] = value.join(': ').trim();
+      const [key, ...valueParts] = line.split(': ');
+      if (key) frontmatter[key.trim()] = valueParts.join(': ').trim();
     }
     const summary = frontmatter.summary || '';
-    const body = md.replace(/---.*?---\\n?/, '').trim();
+    const body = md.replace(/---.*?\n---\n?/, '').trim();
     const html = marked(body);
     const date = frontmatter.date || path.basename(f, '.md').slice(0,10);
     return { 
