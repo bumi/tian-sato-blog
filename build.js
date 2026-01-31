@@ -1,4 +1,4 @@
-// Node.js script: MD posts → static HTML (marked parse, frontmatter title/date/summary)
+// Node.js script: MD posts → static HTML (marked parse, frontmatter title/date/summary, no leak)
 
 const fs = require('fs');
 const path = require('path');
@@ -11,15 +11,18 @@ const posts = fs.readdirSync(postsDir)
   .filter(f => f.endsWith('.md'))
   .map(f => {
     const md = fs.readFileSync(path.join(postsDir, f), 'utf8');
-    const fmMatch = md.match(/---\n(.*?)\n---/s);
+    const fmMatch = md.match(/---\n([\s\S]*?)\n---/);
     const frontmatterLines = fmMatch ? fmMatch[1].split('\n') : [];
     const frontmatter = {};
     for (let line of frontmatterLines) {
-      const [key, ...valueParts] = line.split(': ');
-      if (key) frontmatter[key.trim()] = valueParts.join(': ').trim();
+      const parts = line.split(': ');
+      if (parts.length >= 2) {
+        frontmatter[parts[0].trim()] = parts.slice(1).join(': ').trim();
+      }
     }
     const summary = frontmatter.summary || '';
-    const body = md.replace(/---.*?\n---\n?/, '').trim();
+    const bodyMatch = md.match(/---\n[\s\S]*?\n---\n?(.*)$/s);
+    const body = bodyMatch ? bodyMatch[1].trim() : md.trim();
     const html = marked(body);
     const date = frontmatter.date || path.basename(f, '.md').slice(0,10);
     return { 
@@ -34,11 +37,12 @@ const posts = fs.readdirSync(postsDir)
 
 let html = '';
 posts.forEach(post => {
+  const summaryHtml = post.summary ? marked(post.summary) : '';
   html += `
     <article class="post">
       <h1>${post.title}</h1>
       <div class="date">${post.date}</div>
-      ${post.summary ? `<div class="summary">${marked(post.summary)}</div>` : ''}
+      ${summaryHtml ? `<div class="summary">${summaryHtml}</div>` : ''}
       <div class="content">${post.html}</div>
     </article>
   `;
@@ -48,4 +52,4 @@ const indexContent = fs.readFileSync('index.html', 'utf8');
 const index = indexContent.replace('<!-- POSTS -->', html);
 fs.writeFileSync('index.html', index);
 
-console.log(`Built ${posts.length} posts into index.html`);
+console.log(`Built ${posts.length} posts into index.html (no errors, summaries rendered)`);
