@@ -23,7 +23,7 @@ const body = md.replace(/---.*?---\\n?/, '').trim();
 post.summary = summary;
     const html = marked(body);
     const date = frontmatter.date || path.basename(f, '.md').slice(0,10);
-    return { title: frontmatter.title || path.basename(f, '.md'), date, html, slug: path.basename(f, '.md').replace('.md', '') };
+    return { title: frontmatter.title || path.basename(f, '.md'), date, html, summary, slug: path.basename(f, '.md').replace('.md', '') };
   })
   .sort((a,b) => new Date(b.date) - new Date(a.date)); // Chrono desc
 
