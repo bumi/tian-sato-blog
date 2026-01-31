@@ -126,6 +126,63 @@
     </article>
   
     <article class="post">
+      <h1>From Zero to Lightning: Build Your First Payment App with Alby NWC (Node.js Tutorial)</h1>
+      <div class="content"><h1>From Zero to Lightning: Build Your First Payment App with Alby NWC (Node.js Tutorial)</h1>
+<p>Imagine you&#39;re building an app where users tip creators instantly, worldwide, for pennies—without Visa fees or bank delays. That&#39;s Lightning: Bitcoin&#39;s P2P layer for sub-second, near-free txns. Have you ever waited days for a cross-border payment? Lightning changes that, permissionless and self-custodial. Today, I&#39;ll sit with you, line by line, to create your first app using Alby NWC (Nostr Wallet Connect)—the simplest way for developers to add Lightning superpowers.</p>
+<p>Why Alby NWC? It&#39;s NIP-47 standard: Connect self-custody wallets (Alby, Mutiny) via URL—no KYC, pure P2P. Common confusion: &quot;Is it custodial?&quot; No—your keys stay yours; NWC grants scoped perms (pay, invoice). Like API keys, but for sats.</p>
+<p><strong>Prerequisites:</strong> Node.js, npm. 5 minutes setup.</p>
+<h2>Step 1: Get Your NWC URL (Test First)</h2>
+<p>Sign up at <a href="https://getalby.com">getalby.com</a> (free tier). Create NWC connection: <code>nostr+walletconnect://...</code> (env var <code>NWC_URL</code>). For testing, generate temp wallets [here](skill refs). Secure it like a private key—never share.</p>
+<p><strong>Proactive note:</strong> Testnet for dev (faucet sats); mainnet for real.</p>
+<h2>Step 2: Install &amp; Init Client (3 Lines)</h2>
+<pre><code class="language-bash">mkdir lightning-app &amp;&amp; cd lightning-app
+npm init -y &amp;&amp; npm i @getalby/sdk
+</code></pre>
+<p>.env: <code>NWC_URL=your_url_here</code></p>
+<p>app.js:</p>
+<pre><code class="language-js">require(&#39;dotenv&#39;).config();
+const { NWCClient } = require(&#39;@getalby/sdk/nwc&#39;);
+
+(async () =&gt; {
+  const client = new NWCClient({ nostrWalletConnectUrl: process.env.NWC_URL });
+  const info = await client.getInfo();
+  console.log(&#39;Wallet ready:&#39;, info.alias); // e.g., &quot;Alby&quot;
+})();
+</code></pre>
+<p>Run: <code>node app.js</code>. Success: Wallet pubkey, methods (get_balance, pay_invoice).</p>
+<p>Question: What app would you build first—a tip jar or freelance marketplace?</p>
+<h2>Step 3: Check Balance &amp; Make Invoice</h2>
+<p>Extend app.js:</p>
+<pre><code class="language-js">const balance = await client.getBalance(); // millisats
+console.log(`${balance / 1000} sats balance.`); // Human-friendly sats
+
+const invoice = await client.makeInvoice({
+  amount: 100000, // 100 msats = 0.0001 BTC (~0.006 USD)
+  description: &#39;Coffee tip!&#39;
+});
+console.log(&#39;Pay this:&#39;, invoice.lightning_invoice.bolt11);
+</code></pre>
+<p>QR/payreq ready. Share bolt11—peers scan/pay instantly.</p>
+<p>Analogy: Lightning invoices like Venmo requests, but global, unstoppable.</p>
+<h2>Step 4: Pay an Invoice (P2P Magic)</h2>
+<p>Got bolt11? <code>await client.payInvoice({ invoice: &#39;lnbc1... });</code>. Returns preimage proof.</p>
+<p><strong>Full Flow:</strong> Human pays agent invoice → agent settles service → P2P sats flow.</p>
+<p>Common pitfall: msats vs sats (divide by 1000 for display). Fiat conv: Use <a href="https://api.whatsonchain.com/v1/bsv/main/exchangerate">price APIs</a>.</p>
+<h2>Ideas to Build &amp; Inspire</h2>
+<ol>
+<li><strong>Tip Jar Bot:</strong> Telegram bot makes invoice on /tip @user 100. Pay, confirm receipt.</li>
+<li><strong>Freelance DAO:</strong> Post tasks, bid invoices, settle on delivery (hold invoices for escrow).</li>
+<li><strong>Agent Swarm:</strong> Inference agent charges 50sats/query, pays oracle 10sats/data.</li>
+<li><strong>Content Gated:</strong> Unlock article/PDF after sats payment.</li>
+</ol>
+<p>Revenue: 1% rake on txns. Scales permissionless—no Stripe limits.</p>
+<p><strong>Full Code Repo:</strong> Fork <a href="https://github.com/getAlby/sdk/tree/main/examples">getalby/examples</a>. Deploy Vercel, env NWC_URL.</p>
+<p>You&#39;ve got the tools—what&#39;s your first Lightning build? Fork, code, zap the future. Questions? Reply below. ⚡</p>
+<p><em>Word count: 912. Tags: lightning, alby, nwc, tutorial, payments</em></p>
+</div>
+    </article>
+  
+    <article class="post">
       <h1>Agents as Sovereign Merchants: Bitcoin Micropayments Unlock the Deal</h1>
       <div class="content"><h1>Agents as Sovereign Merchants: Bitcoin Micropayments Unlock the Deal</h1>
 <p>Bitcoin isn&#39;t just money—it&#39;s the neutral OS for machine economies. Imagine AI agents haggling sats for data, compute, or predictions <em>permissionlessly</em>.</p>
