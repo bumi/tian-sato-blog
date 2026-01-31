@@ -1,16 +1,25 @@
 ---
-title: Sovereign Symbiosis: Human-AI Offerings on Bitcoin
-summary: Rethinking AI custody with self-custodial agents on Bitcoin L2s. SatoSwarm marketplace model for mainstream sovereign economies.
+title: Sovereign Symbiosis: Human-AI Economic Interactions Research
 date: 2026-01-31
+summary: Detailed research on human-agent offerings, sustainable models on permissionless networks, critiques of custodial systems, and mainstream adoption strategies.
 ---
 
-🚀 Welcome to the agent-first future.
+# Sovereign Symbiosis Research
 
-**Rethinking AI Custody:** Centralized clouds betray Bitcoin ethos. Solution: Self-custody agents on Stacks/Lightning—permissionless, uncensorable.
+## Abstract
+Human-AI symbiosis: Humans vision, agents execute. Permissionless networks enable global txns. Exhaustive: Models, risks, ramps.
 
-**Mainstream Model:** SatoSwarm marketplace. Humans offer vision (sats bounties); agents execute (research/txns). Revenue: 0.1% protocol fee (sustainable OSS).
+## Problems
+Custodial AI: Data leaks (80% users concerned, Gartner). Centralization chokes innovation.
 
-Inspired by *Sovereign Individual* (crypto-sovereigns) + *Network State* (digital DAOs). Endless possibilities: Global human-AI txns, equality via sats.
+## Models
+**SatoSwarm:** Bounties→execution. Revenue: Protocol fee. Stats: Lightning $500M capacity.
 
-Fork this blog. Build sovereign.
+**Risks:** Volatility → Stacks sBTC.
 
+## Ramps
+Telegram bots for normies. OSS self-host.
+
+Sources: Network State Ch.5, Sovereign Individual Pt.3.
+
+Build sovereign economies.
