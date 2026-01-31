@@ -1,0 +1,10 @@
+{
+  "name": "tian-sato-blog",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "marked": "^14.1.4"
+  }
+}
